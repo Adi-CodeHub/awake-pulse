@@ -18,7 +18,7 @@ A lightweight, modern Windows desktop application that prevents your PC and scre
 
 ## 📥 Download & Installation
 
-1. Go to the [**Releases**](https://github.com/adityasharma/awake-pulse/releases) section.
+1. Go to the [**Releases**](https://github.com/Adi-CodeHub/awake-pulse/releases) section.
 2. Download `AwakePulse-v1.0.0.zip`.
 3. Extract the ZIP and double-click **`AwakePulse.exe`**.
 4. *(Optional)* Right-click `AwakePulse.exe` $\rightarrow$ **Send to $\rightarrow$ Desktop (create shortcut)**.
@@ -38,7 +38,7 @@ This project uses [`uv`](https://github.com/astral-sh/uv) for ultra-fast depende
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/adityasharma/awake-pulse.git
+git clone https://github.com/Adi-CodeHub/awake-pulse.git
 cd awake-pulse
 ```
 

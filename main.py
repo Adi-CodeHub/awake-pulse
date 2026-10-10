@@ -9,7 +9,7 @@ import customtkinter as ctk
 import updater
 
 CURRENT_VERSION = "1.0.0"
-GITHUB_REPO = "adityasharma/awake-pulse"
+GITHUB_REPO = "Adi-CodeHub/awake-pulse"
 
 def get_resource_path(relative_path: str) -> str:
     if hasattr(sys, "_MEIPASS"):
