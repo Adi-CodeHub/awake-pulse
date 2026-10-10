@@ -3,13 +3,13 @@ import os
 import sys
 import time
 import threading
-import webbrowser
 import urllib.request
 import json
 import customtkinter as ctk
+import updater
 
 CURRENT_VERSION = "1.0.0"
-GITHUB_REPO = "adityasharma/awake-pulse"  # Aap apna GitHub username/repo update kar sakte hain
+GITHUB_REPO = "adityasharma/awake-pulse"
 
 def get_resource_path(relative_path: str) -> str:
     if hasattr(sys, "_MEIPASS"):
@@ -42,6 +42,7 @@ class SleepPreventerApp(ctk.CTk):
         self.is_active = False
         self.start_time = None
         self.auto_timer_limit = 0
+        self.downloaded_new_exe = None
 
         self.setup_ui()
         self.check_for_updates_background()
@@ -49,29 +50,29 @@ class SleepPreventerApp(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def setup_ui(self):
-        # Update Banner (Initially Hidden)
-        self.update_banner = ctk.CTkFrame(self, fg_color="#1E3A8A", height=36, corner_radius=0)
+        # 1-Click Update Banner (Initially Hidden)
+        self.update_banner = ctk.CTkFrame(self, fg_color="#1E3A8A", height=38, corner_radius=0)
         self.update_label = ctk.CTkLabel(
             self.update_banner,
-            text="🚀 New Version Available!",
+            text="🚀 Version Available!",
             font=ctk.CTkFont(size=11, weight="bold"),
             text_color="#93C5FD"
         )
-        self.update_label.pack(side="left", padx=16, pady=4)
+        self.update_label.pack(side="left", padx=16, pady=6)
 
         self.update_btn = ctk.CTkButton(
             self.update_banner,
-            text="Download",
+            text="Update Now",
             font=ctk.CTkFont(size=11, weight="bold"),
             fg_color="#3B82F6",
             hover_color="#2563EB",
-            height=24,
-            width=80,
-            corner_radius=12,
-            command=self.open_update_link
+            height=26,
+            width=95,
+            corner_radius=13,
+            command=self.handle_one_click_update
         )
-        self.update_btn.pack(side="right", padx=16, pady=4)
-        self.download_url = f"https://github.com/{GITHUB_REPO}/releases"
+        self.update_btn.pack(side="right", padx=16, pady=6)
+        self.binary_download_url = ""
 
         # Header Section
         header = ctk.CTkFrame(self, fg_color="transparent")
@@ -207,7 +208,6 @@ class SleepPreventerApp(ctk.CTk):
         )
         self.timer_dropdown.pack(side="right")
 
-        # Bottom Information
         footer = ctk.CTkLabel(
             self,
             text="🛡️ Native Windows execution state • Zero CPU usage",
@@ -225,7 +225,12 @@ class SleepPreventerApp(ctk.CTk):
                     data = json.loads(resp.read().decode())
                     tag = data.get("tag_name", "").lstrip("v")
                     if tag and tag > CURRENT_VERSION:
-                        self.download_url = data.get("html_url", self.download_url)
+                        # Find the direct .exe asset in the release
+                        assets = data.get("assets", [])
+                        for a in assets:
+                            if a.get("name", "").endswith(".exe") or a.get("name", "").endswith(".zip"):
+                                self.binary_download_url = a.get("browser_download_url", "")
+                                break
                         self.after(0, lambda: self.show_update_banner(tag))
             except Exception:
                 pass
@@ -235,8 +240,39 @@ class SleepPreventerApp(ctk.CTk):
         self.update_label.configure(text=f"🚀 Version {new_ver} Available!")
         self.update_banner.pack(side="top", fill="x", before=self.winfo_children()[1])
 
-    def open_update_link(self):
-        webbrowser.open(self.download_url)
+    def handle_one_click_update(self):
+        if self.downloaded_new_exe:
+            # Stage 2: Restart and apply
+            updater.apply_update_and_restart(self.downloaded_new_exe)
+            return
+
+        if not self.binary_download_url:
+            return
+
+        # Stage 1: In-app background download
+        self.update_btn.configure(state="disabled", text="Downloading...")
+
+        def _do_download():
+            def _on_progress(pct):
+                self.after(0, lambda: self.update_btn.configure(text=f"{pct}%"))
+
+            try:
+                target = updater.download_update_binary(self.binary_download_url, progress_callback=_on_progress)
+                self.downloaded_new_exe = target
+                self.after(0, self.on_download_complete)
+            except Exception as e:
+                self.after(0, lambda: self.update_btn.configure(state="normal", text="Retry", fg_color="#EF4444"))
+
+        threading.Thread(target=_do_download, daemon=True).start()
+
+    def on_download_complete(self):
+        self.update_label.configure(text="✅ Downloaded! Ready to install.")
+        self.update_btn.configure(
+            state="normal",
+            text="🔄 Restart",
+            fg_color="#10B981",
+            hover_color="#059669"
+        )
 
     def on_timer_option_changed(self, choice):
         mapping = {
