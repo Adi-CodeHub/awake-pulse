@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- ===== SEO ===== -->
+  <title>AwakePulse – Keep Windows Awake | Sleep &amp; Screen Preventer</title>
+  <meta name="description" content="AwakePulse is a lightweight Windows utility that prevents sleep mode, optionally keeps your display on, and offers an auto-stop timer. Download the .exe." />
+  <meta name="keywords" content="AwakePulse, prevent Windows sleep, keep PC awake, keep screen on, sleep preventer, screen on utility, auto stop timer, Windows utility" />
+  <meta name="author" content="Adi-CodeHub" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#f5f8ff" />
+  <!-- After hosting, add these two lines with your real domain:
+       <link rel="canonical" href="https://YOUR-DOMAIN/" />
+       <meta property="og:url" content="https://YOUR-DOMAIN/" />
+       and an og:image / twitter:image (1200x630) for rich link previews. -->
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="AwakePulse" />
+  <meta property="og:title" content="AwakePulse – Stay Awake. Stay in Control." />
+  <meta property="og:description" content="A lightweight Windows utility that keeps your PC awake. Prevent sleep mode, keep your display on, and set an optional auto-stop timer." />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="AwakePulse – Stay Awake. Stay in Control." />
+  <meta name="twitter:description" content="A lightweight Windows utility that keeps your PC awake. Prevent sleep, keep your display on, set an auto-stop timer." />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Cpath d='M36 8 16 36h14l-2 20 20-28H34z' fill='white'/%3E%3C/svg%3E" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "AwakePulse",
+        "alternateName": "AwakePulse Screen Sleep Preventer",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Windows",
+        "softwareVersion": "1.0.0",
+        "description": "A lightweight Windows utility that prevents sleep mode, optionally keeps the display on, and offers an optional auto-stop timer.",
+        "downloadUrl": "https://github.com/Adi-CodeHub/awake-pulse/releases/download/v1.0.0/AwakePulse.exe",
+        "author": { "@type": "Person", "name": "Adi-CodeHub", "url": "https://github.com/Adi-CodeHub" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is AwakePulse?",
+            "acceptedAnswer": { "@type": "Answer", "text": "AwakePulse is a lightweight Windows utility that helps keep your PC from going to sleep. You can also choose to keep the display on, and set an optional auto-stop timer." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I download AwakePulse?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Click any Download for Windows button on this page. It downloads AwakePulse.exe directly from the project's GitHub release. Run the downloaded file to start the app." }
+          },
+          {
+            "@type": "Question",
+            "name": "What does Keep Display / Screen ON do?",
+            "acceptedAnswer": { "@type": "Answer", "text": "When it is ticked, AwakePulse also asks Windows not to turn the screen off, not just to avoid sleep. Untick it if you only want the PC itself to stay awake." }
+          },
+          {
+            "@type": "Question",
+            "name": "How does the auto-stop timer work?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Choose a duration, or select Indefinite to keep sleep prevention on until you turn it off yourself. When the chosen time is reached, sleep prevention stops." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I turn sleep prevention off?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Use the Sleep Prevention switch in the app to turn it off, or let the auto-stop timer end it for you." }
+          },
+          {
+            "@type": "Question",
+            "name": "Which versions of Windows does AwakePulse support?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Specific Windows versions are not listed yet. Please check the project's GitHub page for the latest details before downloading." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Apply saved/system theme before first paint (prevents a white flash in dark mode) -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('ap-theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light') {
+        t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+      var m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.setAttribute('content', t === 'dark' ? '#070b14' : '#f5f8ff');
+    })();
+  </script>
+  <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+            night: { 900: '#0b1220', 800: '#101a2e', 700: '#18233b', 600: '#222f4a' }
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    // Backup CDN in case the first one is blocked or slow
+    window.lucide || document.write('<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"><\/script>');
+  </script>
+
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-soft: #3b82f6;
+      --green: #10b981;
+      --ink: #0f172a;
+      --muted: #475569;
+    }
+
+    * { -webkit-tap-highlight-color: transparent; }
+    html { scroll-padding-top: 110px; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: var(--ink);
+      background: #f6f8fc;
+      overflow-x: hidden;
+    }
+
+    /* ---------- Ambient background ---------- */
+    .ambient {
+      position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #e3edff 0%, transparent 60%),
+        radial-gradient(900px 500px at 100% 10%, #e6fbf3 0%, transparent 55%),
+        linear-gradient(180deg, #ffffff 0%, #f3f6fb 100%);
+    }
+    .blob {
+      position: absolute; border-radius: 9999px; filter: blur(80px); opacity: .55;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .blob.b1 { width: 420px; height: 420px; background: #93c5fd; top: -80px; left: -80px; }
+    .blob.b2 { width: 360px; height: 360px; background: #a7f3d0; top: 30%; right: -100px; animation-delay: -6s; opacity: .4; }
+    .blob.b3 { width: 380px; height: 380px; background: #bfdbfe; bottom: -120px; left: 25%; animation-delay: -11s; opacity: .45; }
+    @keyframes drift {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(40px, 30px, 0) scale(1.12); }
+    }
+    .grid-fade {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(37,99,235,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(37,99,235,.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 0%, #000 30%, transparent 75%);
+              mask-image: radial-gradient(ellipse 70% 50% at 50% 0%, #000 30%, transparent 75%);
+    }
+
+    /* ---------- Glass ---------- */
+    .glass {
+      background: rgba(255, 255, 255, .62);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+              backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, .85);
+      box-shadow: 0 10px 40px -12px rgba(30, 64, 175, .18), inset 0 1px 0 rgba(255,255,255,.9);
+    }
+    .glass-strong {
+      background: rgba(255, 255, 255, .8);
+      -webkit-backdrop-filter: blur(22px) saturate(170%);
+              backdrop-filter: blur(22px) saturate(170%);
+      border: 1px solid rgba(226, 232, 240, .9);
+    }
+
+    /* ---------- Nav links ---------- */
+    .nav-link { position: relative; color: #334155; font-weight: 500; transition: color .25s ease; }
+    .nav-link::after {
+      content: ''; position: absolute; left: 0; bottom: -6px; height: 2px; width: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+      transform: scaleX(0); transform-origin: left; transition: transform .3s ease; border-radius: 2px;
+    }
+    .nav-link:hover { color: var(--blue); }
+    .nav-link:hover::after { transform: scaleX(1); }
+
+    /* ---------- Buttons ---------- */
+    .btn-primary {
+      position: relative; isolation: isolate; overflow: hidden;
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 55%, #2f6bf0 100%);
+      color: #fff; font-weight: 600;
+      box-shadow: 0 10px 30px -8px rgba(37, 99, 235, .55), inset 0 1px 0 rgba(255,255,255,.3);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -8px rgba(37, 99, 235, .65), inset 0 1px 0 rgba(255,255,255,.35); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
+      transform: translateX(-120%); transition: transform .7s ease;
+    }
+    .btn-primary:hover::before { transform: translateX(120%); }
+    .btn-primary.pulse-ring::after {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: -2;
+      box-shadow: 0 0 0 0 rgba(59,130,246,.5);
+      animation: ring 2.8s ease-out infinite;
+    }
+    @keyframes ring {
+      0%   { box-shadow: 0 0 0 0 rgba(59,130,246,.45); }
+      70%  { box-shadow: 0 0 0 18px rgba(59,130,246,0); }
+      100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,.7); border: 1px solid #dbe4f3; color: #1e293b; font-weight: 600;
+      transition: all .25s ease;
+    }
+    .btn-ghost:hover { background: #fff; border-color: #93c5fd; color: var(--blue); transform: translateY(-2px); box-shadow: 0 10px 25px -10px rgba(37,99,235,.35); }
+
+    /* ---------- Reveal on scroll ---------- */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0ms); }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* ---------- Hero ---------- */
+    .gradient-text {
+      background: linear-gradient(120deg, #1d4ed8 0%, #3b82f6 45%, #10b981 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 8s ease-in-out infinite;
+    }
+    @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+    .float { animation: float 6.5s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform: translateY(0) rotate(-.4deg); } 50% { transform: translateY(-14px) rotate(.4deg); } }
+
+    .browser {
+      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.65));
+      border: 1px solid rgba(255,255,255,.95);
+      border-radius: 28px;
+      box-shadow:
+        0 50px 100px -30px rgba(30, 64, 175, .35),
+        0 18px 40px -18px rgba(15, 23, 42, .25),
+        inset 0 1px 0 #fff;
+    }
+    .browser-bar { border-bottom: 1px solid #e5eaf3; }
+    .dot { width: 11px; height: 11px; border-radius: 9999px; display: inline-block; }
+
+    /* ---------- App mockup ---------- */
+    .app-window { background: #0d1424; border-radius: 14px; overflow: hidden; border: 1px solid #1f2a44; box-shadow: 0 20px 50px -20px rgba(2, 6, 23, .7); }
+    .app-title { background: #1f1f1f; color: #e5e7eb; font-size: 12.5px; }
+    .app-body { background: #131b2d; }
+    .app-card { background: linear-gradient(180deg, #1a2337 0%, #172033 100%); border: 1px solid #28344f; border-radius: 22px; }
+    .status-pill { background: rgba(16, 185, 129, .16); color: #34d399; border: 1px solid rgba(16,185,129,.12); transition: all .35s ease; }
+    .status-pill.off { background: rgba(148,163,184,.14); color: #94a3b8; border-color: rgba(148,163,184,.12); }
+    .status-dot { width: 7px; height: 7px; border-radius: 9999px; background: #10b981; box-shadow: 0 0 0 0 rgba(16,185,129,.7); animation: dotPulse 1.8s ease-out infinite; }
+    .status-pill.off .status-dot { background: #94a3b8; animation: none; box-shadow: none; }
+    @keyframes dotPulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.65); } 80%,100% { box-shadow: 0 0 0 8px rgba(16,185,129,0); } }
+
+    .timer { font-variant-numeric: tabular-nums; letter-spacing: .01em; text-shadow: 0 0 28px rgba(96,165,250,.25); }
+    .timer.off { opacity: .55; text-shadow: none; }
+    .timer .sep { animation: blink 1s steps(2, start) infinite; }
+    .timer.off .sep { animation: none; }
+    @keyframes blink { 50% { opacity: .35; } }
+
+    .toggle-row { background: #0f1729; border-radius: 16px; }
+    .switch { position: relative; width: 54px; height: 30px; border-radius: 9999px; background: #475569; transition: background .3s ease; cursor: pointer; flex-shrink: 0; }
+    .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 9999px; background: #e2e8f0; transition: transform .3s cubic-bezier(.3,1.4,.5,1); box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+    .switch[aria-checked="true"] { background: #10b981; box-shadow: 0 0 18px rgba(16,185,129,.35); }
+    .switch[aria-checked="true"]::after { transform: translateX(24px); }
+    .switch:focus-visible { outline: 2px solid #60a5fa; outline-offset: 3px; }
+
+    .chk { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; border-radius: 6px; background: #1e293b; border: 1.5px solid #475569; display: grid; place-content: center; cursor: pointer; transition: all .2s ease; flex-shrink: 0; }
+    .chk:checked { background: #3b82f6; border-color: #3b82f6; }
+    .chk::before { content: ''; width: 11px; height: 6px; border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff; transform: rotate(-45deg) scale(0) translate(1px, -1px); transition: transform .18s ease; }
+    .chk:checked::before { transform: rotate(-45deg) scale(1) translate(1px, -1px); }
+    .chk:focus-visible { outline: 2px solid #60a5fa; outline-offset: 3px; }
+
+    .select-wrap { position: relative; }
+    .select-wrap select { appearance: none; -webkit-appearance: none; background: #232f47; color: #e5e7eb; border-radius: 10px; padding: 9px 38px 9px 14px; font-size: 14px; border: 1px solid transparent; cursor: pointer; width: 100%; transition: border-color .2s ease; }
+    .select-wrap select:hover { border-color: #3b4a6b; }
+    .select-wrap select:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
+    .select-wrap .chev { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #cbd5e1; }
+
+    /* ---------- Cards ---------- */
+    .card { transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 28px 55px -22px rgba(37, 99, 235, .35); border-color: #bfdbfe; }
+    .icon-chip { background: linear-gradient(135deg, #dbeafe, #eff6ff); color: var(--blue); transition: transform .35s ease, background .35s ease, color .35s ease; }
+    .card:hover .icon-chip { transform: rotate(-6deg) scale(1.08); background: linear-gradient(135deg, #2563eb, #3b82f6); color: #fff; }
+    .icon-chip.green { background: linear-gradient(135deg, #d1fae5, #ecfdf5); color: #059669; }
+    .card:hover .icon-chip.green { background: linear-gradient(135deg, #059669, #10b981); color: #fff; }
+
+    .step-line { background: linear-gradient(90deg, transparent, #bfdbfe 15%, #bfdbfe 85%, transparent); }
+
+    .live-dot { width: 8px; height: 8px; border-radius: 9999px; background: #10b981; animation: dotPulse 1.8s ease-out infinite; }
+
+    .download-panel {
+      background: radial-gradient(700px 300px at 20% 0%, rgba(59,130,246,.35), transparent 60%), radial-gradient(600px 300px at 90% 100%, rgba(16,185,129,.28), transparent 60%), linear-gradient(135deg, #0b1220 0%, #14203a 100%);
+    }
+    .btn-white { background: #fff; color: #1d4ed8; font-weight: 700; transition: transform .25s ease, box-shadow .25s ease; box-shadow: 0 14px 34px -10px rgba(0,0,0,.45); }
+    .btn-white:hover { transform: translateY(-3px); box-shadow: 0 20px 44px -10px rgba(59,130,246,.55); }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; border-radius: 12px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    /* ---------- FAQ ---------- */
+    .faq-item { transition: border-color .3s ease, box-shadow .3s ease; }
+    .faq-item:hover { border-color: #bfdbfe; }
+    .faq-item[open] { border-color: #bfdbfe; box-shadow: 0 18px 40px -22px rgba(37,99,235,.35); }
+    .faq-item summary { list-style: none; cursor: pointer; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-chev { transition: transform .3s ease; }
+    .faq-item[open] .faq-chev { transform: rotate(180deg); }
+    .faq-body { animation: faqIn .35s ease; }
+    @keyframes faqIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+    /* ---------- Theme toggle ---------- */
+    .icon-btn { transition: background-color .25s ease, transform .25s ease; }
+    .icon-btn:hover { background: rgba(255,255,255,.85); }
+    .icon-btn:active { transform: scale(.94); }
+    .icon-sun { display: none; }
+    .icon-moon { display: block; }
+
+    /* ---------- Back to top ---------- */
+    .to-top {
+      position: fixed; right: 16px; bottom: 16px; z-index: 40;
+      width: 52px; height: 52px; border-radius: 9999px;
+      display: grid; place-items: center; color: var(--blue);
+      opacity: 0; visibility: hidden; transform: translateY(16px) scale(.9);
+      transition: opacity .35s ease, transform .35s ease, visibility .35s ease, background-color .25s ease;
+    }
+    .to-top.show { opacity: 1; visibility: visible; transform: none; }
+    .to-top:hover { transform: translateY(-3px) scale(1.04); }
+    .to-top svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); pointer-events: none; }
+    .to-top .ring-bg { stroke: rgba(37,99,235,.15); }
+    .to-top .ring-fg { stroke: #2563eb; stroke-linecap: round; transition: stroke-dashoffset .15s linear; }
+    @media (min-width: 640px) { .to-top { right: 32px; bottom: 32px; } }
+
+    /* ---------- Dark theme ---------- */
+    body { transition: background-color .4s ease, color .4s ease; }
+    html[data-theme="dark"] { color-scheme: dark; }
+    html[data-theme="dark"] body { background: #070b14; color: #e2e8f0; }
+    html[data-theme="dark"] .ambient {
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #10213f 0%, transparent 60%),
+        radial-gradient(900px 500px at 100% 10%, #0a2a25 0%, transparent 55%),
+        linear-gradient(180deg, #070b14 0%, #0a1020 100%);
+    }
+    html[data-theme="dark"] .blob { opacity: .22; }
+    html[data-theme="dark"] .blob.b2 { opacity: .15; }
+    html[data-theme="dark"] .blob.b3 { opacity: .18; }
+    html[data-theme="dark"] .grid-fade {
+      background-image:
+        linear-gradient(to right, rgba(96,165,250,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(96,165,250,.06) 1px, transparent 1px);
+    }
+    html[data-theme="dark"] .glass {
+      background: rgba(15,23,42,.62); border-color: rgba(148,163,184,.16);
+      box-shadow: 0 10px 40px -12px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    html[data-theme="dark"] .glass-strong { background: rgba(17,26,46,.78); border-color: rgba(148,163,184,.16); }
+    html[data-theme="dark"] .card:hover,
+    html[data-theme="dark"] .faq-item:hover,
+    html[data-theme="dark"] .faq-item[open] { border-color: rgba(96,165,250,.45); }
+    html[data-theme="dark"] .card:hover { box-shadow: 0 28px 55px -22px rgba(37,99,235,.45); }
+
+    html[data-theme="dark"] .text-slate-800 { color: #f1f5f9; }
+    html[data-theme="dark"] .text-slate-700 { color: #e2e8f0; }
+    html[data-theme="dark"] .text-slate-600 { color: #a9b6ca; }
+    html[data-theme="dark"] .text-slate-500 { color: #8fa0b8; }
+    html[data-theme="dark"] .text-brand-600 { color: #60a5fa; }
+    html[data-theme="dark"] .app-window .text-slate-500 { color: #64748b; }
+    html[data-theme="dark"] .nav-link { color: #cbd5e1; }
+    html[data-theme="dark"] .nav-link:hover { color: #60a5fa; }
+    html[data-theme="dark"] .mobile-link:hover { background: rgba(59,130,246,.16); }
+    html[data-theme="dark"] .icon-btn { color: #e2e8f0; }
+    html[data-theme="dark"] .icon-btn:hover { background: rgba(148,163,184,.16); }
+    html[data-theme="dark"] .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: none; }
+
+    html[data-theme="dark"] .btn-ghost { background: rgba(30,41,59,.7); border-color: #2b3a57; color: #e2e8f0; }
+    html[data-theme="dark"] .btn-ghost:hover { background: #1e293b; border-color: #60a5fa; color: #93c5fd; }
+
+    html[data-theme="dark"] .browser {
+      background: linear-gradient(180deg, rgba(23,33,56,.9), rgba(15,23,42,.7));
+      border-color: rgba(148,163,184,.16);
+      box-shadow: 0 50px 100px -30px rgba(0,0,0,.7), 0 18px 40px -18px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    html[data-theme="dark"] .browser-bar { border-bottom-color: #22304d; }
+    html[data-theme="dark"] .url-pill { background: rgba(30,41,59,.9); }
+    html[data-theme="dark"] .bg-white { background: #1e293b; }
+    html[data-theme="dark"] .border-slate-200 { border-color: #2b3a57; }
+    html[data-theme="dark"] .bg-brand-50 { background: rgba(37,99,235,.2); }
+
+    html[data-theme="dark"] .icon-chip { background: linear-gradient(135deg, rgba(37,99,235,.3), rgba(59,130,246,.12)); color: #93c5fd; }
+    html[data-theme="dark"] .icon-chip.green { background: linear-gradient(135deg, rgba(16,185,129,.28), rgba(16,185,129,.1)); color: #6ee7b7; }
+    html[data-theme="dark"] .step-line { background: linear-gradient(90deg, transparent, #27406f 15%, #27406f 85%, transparent); }
+    html[data-theme="dark"] .download-panel { border: 1px solid rgba(148,163,184,.18); }
+    html[data-theme="dark"] a:focus-visible,
+    html[data-theme="dark"] button:focus-visible { outline-color: #60a5fa; }
+
+    html[data-theme="dark"] .to-top { color: #93c5fd; }
+    html[data-theme="dark"] .to-top .ring-bg { stroke: rgba(148,163,184,.2); }
+    html[data-theme="dark"] .to-top .ring-fg { stroke: #60a5fa; }
+  </style>
+</head>
+
+<body>
+  <a href="#top" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-xl focus:bg-brand-600 focus:text-white focus:px-4 focus:py-2">Skip to content</a>
+
+  <!-- Ambient background -->
+  <div class="ambient" aria-hidden="true">
+    <div class="grid-fade"></div>
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  </div>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="fixed top-4 sm:top-5 inset-x-4 sm:inset-x-8 lg:inset-x-16 z-50">
+    <nav class="glass rounded-2xl sm:rounded-full max-w-6xl mx-auto px-4 sm:px-6" aria-label="Main navigation">
+      <div class="flex items-center justify-between h-16">
+        <a href="#top" class="flex items-center gap-2.5 group" aria-label="AwakePulse home">
+          <span class="grid place-items-center w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-400 text-white shadow-lg shadow-brand-500/30 transition-transform duration-300 group-hover:rotate-[-8deg] group-hover:scale-105">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+          </span>
+          <span class="text-xl font-bold tracking-tight">AwakePulse</span>
+        </a>
+
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#how" class="nav-link">How it works</a>
+          <a href="#benefits" class="nav-link">Benefits</a>
+          <a href="#faq" class="nav-link">FAQ</a>
+          <a href="#download" class="nav-link">Download</a>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" data-theme-toggle class="icon-btn grid place-items-center w-11 h-11 rounded-xl" aria-label="Switch to dark mode" title="Toggle dark / light mode">
+            <i data-lucide="moon" class="icon-moon w-5 h-5"></i>
+            <i data-lucide="sun" class="icon-sun w-5 h-5"></i>
+          </button>
+          <a href="https://github.com/Adi-CodeHub/awake-pulse/releases/download/v1.0.0/AwakePulse.exe"
+             class="btn-primary hidden sm:inline-flex items-center gap-2 rounded-full px-5 h-11 text-[15px]">
+            <i data-lucide="download" class="w-4 h-4"></i> Download for Windows
+          </a>
+          <button id="menuBtn" class="icon-btn md:hidden grid place-items-center w-11 h-11 rounded-xl" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+            <i data-lucide="menu" class="w-6 h-6" id="menuIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobileMenu" class="md:hidden overflow-hidden transition-all duration-300 ease-out" style="max-height:0;opacity:0" aria-hidden="true">
+        <div class="pb-4 pt-1 flex flex-col gap-1">
+          <a href="#features" class="mobile-link px-3 h-12 flex items-center rounded-xl font-medium hover:bg-brand-50">Features</a>
+          <a href="#how" class="mobile-link px-3 h-12 flex items-center rounded-xl font-medium hover:bg-brand-50">How it works</a>
+          <a href="#benefits" class="mobile-link px-3 h-12 flex items-center rounded-xl font-medium hover:bg-brand-50">Benefits</a>
+          <a href="#faq" class="mobile-link px-3 h-12 flex items-center rounded-xl font-medium hover:bg-brand-50">FAQ</a>
+          <a href="#download" class="mobile-link px-3 h-12 flex items-center rounded-xl font-medium hover:bg-brand-50">Download</a>
+          <a href="https://github.com/Adi-CodeHub/awake-pulse/releases/download/v1.0.0/AwakePulse.exe"
+             class="btn-primary mt-2 inline-flex items-center justify-center gap-2 rounded-xl h-12">
+            <i data-lucide="download" class="w-4 h-4"></i> Download for Windows
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- ================= HERO ================= -->
+    <section class="relative pt-36 sm:pt-44 pb-20 sm:pb-28 px-4 sm:px-8">
+      <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-14 lg:gap-8 items-center">
+        <div class="text-center lg:text-left">
+          <div class="reveal inline-flex items-center gap-2 glass rounded-full pl-3 pr-4 py-1.5 text-sm font-medium text-slate-700">
+            <span class="live-dot"></span> Windows utility · v1.0.0
+          </div>
+
+          <h1 class="reveal mt-6 text-5xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05]" style="--d:80ms">
+            Stay Awake.<br /><span class="gradient-text">Stay in Control.</span>
+          </h1>
+
+          <p class="reveal mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0" style="--d:160ms">
+            A lightweight Windows utility that keeps your PC awake when you need it. Prevent sleep mode, keep your display on, and stay productive without unnecessary background overhead.
+          </p>
+
+          <div class="reveal mt-9 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start" style="--d:240ms">
+            <a href="https://github.com/Adi-CodeHub/awake-pulse/releases/download/v1.0.0/AwakePulse.exe"
+               class="btn-primary pulse-ring inline-flex items-center justify-center gap-3 rounded-2xl px-7 h-14 text-lg">
+              <i data-lucide="download" class="w-5 h-5"></i>
+              <span class="flex flex-col items-start leading-tight">
+                <span>Download for Windows</span>
+                <span class="text-[11px] font-medium text-white/80 -mt-0.5">AwakePulse.exe · v1.0.0</span>
+              </span>
+            </a>
+            <a href="#features" class="btn-ghost inline-flex items-center justify-center gap-2 rounded-2xl px-7 h-14 text-lg">
+              Explore Features <i data-lucide="arrow-down" class="w-5 h-5"></i>
+            </a>
+          </div>
+
+          <div class="reveal mt-7 flex items-center justify-center lg:justify-start gap-2.5 text-sm text-slate-600" style="--d:320ms">
+            <span class="grid place-items-center w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-200">
+              <i data-lucide="monitor" class="w-4 h-4 text-brand-600"></i>
+            </span>
+            <span>Made for <strong class="text-slate-800">Windows</strong> · Direct .exe download from GitHub</span>
+          </div>
+        </div>
+
+        <!-- Browser frame + live app mockup -->
+        <div class="reveal relative flex justify-center" style="--d:200ms">
+          <div class="absolute -inset-6 bg-gradient-to-tr from-brand-300/40 via-transparent to-emerald-200/50 blur-3xl rounded-full" aria-hidden="true"></div>
+
+          <div class="float relative w-full max-w-[470px]">
+            <div class="browser p-3 sm:p-4">
+              <div class="browser-bar flex items-center gap-3 pb-3 px-1">
+                <div class="flex gap-1.5" aria-hidden="true">
+                  <span class="dot bg-red-400"></span><span class="dot bg-amber-400"></span><span class="dot bg-emerald-400"></span>
+                </div>
+                <div class="url-pill flex-1 flex items-center gap-2 bg-slate-100/90 rounded-lg px-3 h-8 text-xs text-slate-500 min-w-0">
+                  <i data-lucide="lock" class="w-3 h-3 shrink-0"></i><span class="truncate">awakepulse · live preview</span>
+                </div>
+                <span class="hidden sm:inline text-[11px] font-medium text-brand-600 bg-brand-50 px-2 py-1 rounded-md">Try it</span>
+              </div>
+
+              <div class="pt-3">
+                <!-- App window -->
+                <div class="app-window">
+                  <div class="app-title flex items-center justify-between pl-3 h-9">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="grid place-items-center w-4 h-4 rounded-full bg-brand-500"><i data-lucide="zap" class="w-2.5 h-2.5 text-white"></i></span>
+                      <span class="truncate">AwakePulse • Screen Sleep Preventer</span>
+                    </div>
+                    <div class="flex text-slate-400" aria-hidden="true">
+                      <span class="w-10 h-9 grid place-items-center"><i data-lucide="minus" class="w-3.5 h-3.5"></i></span>
+                      <span class="w-10 h-9 grid place-items-center"><i data-lucide="square" class="w-3 h-3"></i></span>
+                      <span class="w-10 h-9 grid place-items-center"><i data-lucide="x" class="w-3.5 h-3.5"></i></span>
+                    </div>
+                  </div>
+
+                  <div class="app-body p-4 sm:p-5 text-slate-100">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2.5">
+                        <i data-lucide="zap" class="w-7 h-7 text-slate-100"></i>
+                        <span class="text-2xl font-bold tracking-tight">AwakePulse</span>
+                      </div>
+                      <span class="text-[11px] font-semibold text-slate-400 bg-[#1b2438] px-3 py-1.5 rounded-lg">v1.0.0</span>
+                    </div>
+                    <p class="mt-2 text-[12.5px] text-slate-400">Native zero-overhead Windows screen &amp; sleep prevention</p>
+
+                    <div class="app-card mt-5 p-4 sm:p-5">
+                      <div class="flex justify-center">
+                        <div id="statusPill" class="status-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-[12px] font-bold tracking-wider" role="status" aria-live="polite">
+                          <span class="status-dot"></span><span id="statusText">PREVENTING SLEEP (ACTIVE)</span>
+                        </div>
+                      </div>
+
+                      <div class="mt-5 text-center">
+                        <div id="timer" class="timer text-5xl sm:text-[56px] font-semibold text-white leading-none" aria-label="Active awake duration">
+                          <span id="tH">00</span><span class="sep">:</span><span id="tM">09</span><span class="sep">:</span><span id="tS">36</span>
+                        </div>
+                        <div class="mt-2.5 text-[12px] text-slate-500">Active Awake Duration</div>
+                      </div>
+
+                      <div class="toggle-row mt-6 flex items-center justify-between px-4 py-4">
+                        <span id="swLabel" class="font-semibold text-[15px]">Sleep Prevention</span>
+                        <button id="sleepSwitch" class="switch" role="switch" aria-checked="true" aria-labelledby="swLabel"></button>
+                      </div>
+
+                      <label class="mt-5 flex items-center gap-3 text-[13.5px] text-slate-200 cursor-pointer select-none">
+                        <input id="displayChk" type="checkbox" class="chk" checked />
+                        <span>Keep Display / Screen ON (not just CPU)</span>
+                      </label>
+
+                      <div class="mt-4 flex items-center justify-between gap-3">
+                        <label for="autoStop" class="text-[13px] text-slate-400 whitespace-nowrap">Auto Stop Timer:</label>
+                        <div class="select-wrap w-[52%] max-w-[170px]">
+                          <select id="autoStop">
+                            <option value="0">Indefinite</option>
+                            <option value="900">15 minutes</option>
+                            <option value="1800">30 minutes</option>
+                            <option value="3600">1 hour</option>
+                            <option value="7200">2 hours</option>
+                            <option value="14400">4 hours</option>
+                          </select>
+                          <i data-lucide="chevron-down" class="chev w-4 h-4"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p class="mt-4 text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5">
+                      <i data-lucide="shield" class="w-3 h-3"></i> Native Windows execution state • Zero CPU usage
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="text-center mt-4 text-xs text-slate-500">Interactive preview — flip the switch, tick the box, pick a timer.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+    <section id="features" class="relative py-20 sm:py-28 px-4 sm:px-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto">
+          <span class="reveal inline-block text-sm font-semibold tracking-widest text-brand-600 uppercase">Features</span>
+          <h2 class="reveal mt-3 text-4xl sm:text-5xl font-bold tracking-tight" style="--d:60ms">Everything you need. Nothing you don't.</h2>
+          <p class="reveal mt-4 text-lg text-slate-600" style="--d:120ms">Simple, focused controls to keep Windows awake exactly when you want it.</p>
+        </div>
+
+        <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <article class="reveal card glass-strong rounded-3xl p-7" style="--d:0ms">
+            <div class="icon-chip w-14 h-14 rounded-2xl grid place-items-center"><i data-lucide="moon-star" class="w-7 h-7"></i></div>
+            <h3 class="mt-5 text-xl font-semibold">Prevent System Sleep</h3>
+            <p class="mt-2 text-slate-600 leading-relaxed">Help keep Windows awake while you work.</p>
+          </article>
+
+          <article class="reveal card glass-strong rounded-3xl p-7" style="--d:80ms">
+            <div class="icon-chip green w-14 h-14 rounded-2xl grid place-items-center"><i data-lucide="monitor-check" class="w-7 h-7"></i></div>
+            <h3 class="mt-5 text-xl font-semibold">Keep Display On</h3>
+            <p class="mt-2 text-slate-600 leading-relaxed">Optionally prevent the screen from turning off.</p>
+          </article>
+
+          <article class="reveal card glass-strong rounded-3xl p-7" style="--d:160ms">
+            <div class="icon-chip w-14 h-14 rounded-2xl grid place-items-center"><i data-lucide="timer" class="w-7 h-7"></i></div>
+            <h3 class="mt-5 text-xl font-semibold">Auto-Stop Timer</h3>
+            <p class="mt-2 text-slate-600 leading-relaxed">Choose a duration or keep sleep prevention active indefinitely.</p>
+          </article>
+
+          <article class="reveal card glass-strong rounded-3xl p-7" style="--d:0ms">
+            <div class="icon-chip green w-14 h-14 rounded-2xl grid place-items-center"><i data-lucide="feather" class="w-7 h-7"></i></div>
+            <h3 class="mt-5 text-xl font-semibold">Lightweight Utility</h3>
+            <p class="mt-2 text-slate-600 leading-relaxed">Designed to provide a simple, focused experience.</p>
+          </article>
+
+          <article class="reveal card glass-strong rounded-3xl p-7" style="--d:80ms">
+            <div class="icon-chip w-14 h-14 rounded-2xl grid place-items-center"><i data-lucide="toggle-right" class="w-7 h-7"></i></div>
+            <h3 class="mt-5 text-xl font-semibold">Simple Controls</h3>
+            <p class="mt-2 text-slate-600 leading-relaxed">Manage sleep prevention with an intuitive interface.</p>
+          </article>
+
+          <article class="reveal card glass-strong rounded-3xl p-7" style="--d:160ms">
+            <div class="icon-chip green w-14 h-14 rounded-2xl grid place-items-center"><i data-lucide="app-window" class="w-7 h-7"></i></div>
+            <h3 class="mt-5 text-xl font-semibold">Native Windows Experience</h3>
+            <p class="mt-2 text-slate-600 leading-relaxed">A dedicated Windows utility with a clean, minimal interface.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section id="how" class="relative py-20 sm:py-28 px-4 sm:px-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto">
+          <span class="reveal inline-block text-sm font-semibold tracking-widest text-brand-600 uppercase">How it works</span>
+          <h2 class="reveal mt-3 text-4xl sm:text-5xl font-bold tracking-tight" style="--d:60ms">Up and running in three steps</h2>
+        </div>
+
+        <div class="relative mt-16">
+          <div class="step-line hidden md:block absolute top-9 left-0 right-0 h-px" aria-hidden="true"></div>
+          <ol class="grid md:grid-cols-3 gap-10 md:gap-8 relative">
+            <li class="reveal text-center">
+              <div class="relative mx-auto w-[72px] h-[72px] rounded-3xl glass-strong grid place-items-center shadow-lg shadow-brand-500/10">
+                <i data-lucide="download" class="w-8 h-8 text-brand-600"></i>
+                <span class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-brand-600 text-white text-sm font-bold grid place-items-center">1</span>
+              </div>
+              <h3 class="mt-6 text-xl font-semibold">Download</h3>
+              <p class="mt-2 text-slate-600 max-w-xs mx-auto">Grab AwakePulse.exe for Windows from the download button.</p>
+            </li>
+            <li class="reveal text-center" style="--d:100ms">
+              <div class="relative mx-auto w-[72px] h-[72px] rounded-3xl glass-strong grid place-items-center shadow-lg shadow-brand-500/10">
+                <i data-lucide="mouse-pointer-click" class="w-8 h-8 text-brand-600"></i>
+                <span class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-brand-600 text-white text-sm font-bold grid place-items-center">2</span>
+              </div>
+              <h3 class="mt-6 text-xl font-semibold">Open &amp; choose</h3>
+              <p class="mt-2 text-slate-600 max-w-xs mx-auto">Launch the app, then pick whether to keep the display on and set an optional timer.</p>
+            </li>
+            <li class="reveal text-center" style="--d:200ms">
+              <div class="relative mx-auto w-[72px] h-[72px] rounded-3xl glass-strong grid place-items-center shadow-lg shadow-emerald-500/10">
+                <i data-lucide="zap" class="w-8 h-8 text-emerald-500"></i>
+                <span class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-emerald-500 text-white text-sm font-bold grid place-items-center">3</span>
+              </div>
+              <h3 class="mt-6 text-xl font-semibold">Switch on</h3>
+              <p class="mt-2 text-slate-600 max-w-xs mx-auto">Turn on Sleep Prevention and your PC stays awake until you turn it off.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= BENEFITS ================= -->
+    <section id="benefits" class="relative py-20 sm:py-28 px-4 sm:px-8">
+      <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="reveal inline-block text-sm font-semibold tracking-widest text-brand-600 uppercase">Benefits</span>
+          <h2 class="reveal mt-3 text-4xl sm:text-5xl font-bold tracking-tight" style="--d:60ms">Fewer interruptions. More flow.</h2>
+          <p class="reveal mt-5 text-lg text-slate-600 leading-relaxed" style="--d:120ms">
+            Whether you are running a long task, giving a presentation, or just reading, AwakePulse helps stop Windows from sleeping at the wrong moment.
+          </p>
+          <a href="#download" class="reveal btn-ghost mt-8 inline-flex items-center gap-2 rounded-2xl px-6 h-12" style="--d:180ms">
+            Get AwakePulse <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+        </div>
+
+        <ul class="grid sm:grid-cols-2 gap-4">
+          <li class="reveal card glass-strong rounded-2xl p-5 flex gap-4">
+            <span class="icon-chip w-11 h-11 rounded-xl grid place-items-center shrink-0"><i data-lucide="clock" class="w-5 h-5"></i></span>
+            <div><h3 class="font-semibold">Long tasks, uninterrupted</h3><p class="text-sm text-slate-600 mt-1">Keep your PC awake during downloads, renders and other lengthy jobs.</p></div>
+          </li>
+          <li class="reveal card glass-strong rounded-2xl p-5 flex gap-4" style="--d:80ms">
+            <span class="icon-chip green w-11 h-11 rounded-xl grid place-items-center shrink-0"><i data-lucide="presentation" class="w-5 h-5"></i></span>
+            <div><h3 class="font-semibold">Present with confidence</h3><p class="text-sm text-slate-600 mt-1">Keep the screen on while you talk, demo or share.</p></div>
+          </li>
+          <li class="reveal card glass-strong rounded-2xl p-5 flex gap-4" style="--d:160ms">
+            <span class="icon-chip w-11 h-11 rounded-xl grid place-items-center shrink-0"><i data-lucide="sliders-horizontal" class="w-5 h-5"></i></span>
+            <div><h3 class="font-semibold">You stay in control</h3><p class="text-sm text-slate-600 mt-1">Turn it on and off in one click, or let the timer do it for you.</p></div>
+          </li>
+          <li class="reveal card glass-strong rounded-2xl p-5 flex gap-4" style="--d:240ms">
+            <span class="icon-chip green w-11 h-11 rounded-xl grid place-items-center shrink-0"><i data-lucide="sparkles" class="w-5 h-5"></i></span>
+            <div><h3 class="font-semibold">Clean and simple</h3><p class="text-sm text-slate-600 mt-1">One focused window with only the controls that matter.</p></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section id="faq" class="relative py-20 sm:py-28 px-4 sm:px-8" aria-labelledby="faq-title">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center">
+          <span class="reveal inline-block text-sm font-semibold tracking-widest text-brand-600 uppercase">FAQ</span>
+          <h2 id="faq-title" class="reveal mt-3 text-4xl sm:text-5xl font-bold tracking-tight" style="--d:60ms">Questions, answered</h2>
+          <p class="reveal mt-4 text-lg text-slate-600" style="--d:120ms">Quick answers about what AwakePulse does and how to use it.</p>
+        </div>
+
+        <div class="mt-12 space-y-3">
+          <details class="reveal faq-item glass-strong rounded-2xl" name="faq" open>
+            <summary class="flex items-center justify-between gap-4 px-5 sm:px-6 py-5 min-h-[56px] font-semibold text-lg">
+              What is AwakePulse?
+              <i data-lucide="chevron-down" class="faq-chev w-5 h-5 shrink-0 text-brand-600"></i>
+            </summary>
+            <div class="faq-body px-5 sm:px-6 pb-6 text-slate-600 leading-relaxed">AwakePulse is a lightweight Windows utility that helps keep your PC from going to sleep. You can also choose to keep the display on, and set an optional auto-stop timer.</div>
+          </details>
+
+          <details class="reveal faq-item glass-strong rounded-2xl" name="faq" style="--d:60ms">
+            <summary class="flex items-center justify-between gap-4 px-5 sm:px-6 py-5 min-h-[56px] font-semibold text-lg">
+              How do I download AwakePulse?
+              <i data-lucide="chevron-down" class="faq-chev w-5 h-5 shrink-0 text-brand-600"></i>
+            </summary>
+            <div class="faq-body px-5 sm:px-6 pb-6 text-slate-600 leading-relaxed">Click any <strong>Download for Windows</strong> button on this page. It downloads <code class="px-1.5 py-0.5 rounded-md bg-brand-50 text-brand-700 text-[0.9em]">AwakePulse.exe</code> directly from the project's GitHub release. Run the downloaded file to start the app.</div>
+          </details>
+
+          <details class="reveal faq-item glass-strong rounded-2xl" name="faq" style="--d:120ms">
+            <summary class="flex items-center justify-between gap-4 px-5 sm:px-6 py-5 min-h-[56px] font-semibold text-lg">
+              What does “Keep Display / Screen ON” do?
+              <i data-lucide="chevron-down" class="faq-chev w-5 h-5 shrink-0 text-brand-600"></i>
+            </summary>
+            <div class="faq-body px-5 sm:px-6 pb-6 text-slate-600 leading-relaxed">When it is ticked, AwakePulse also asks Windows not to turn the screen off, not just to avoid sleep. Untick it if you only want the PC itself to stay awake.</div>
+          </details>
+
+          <details class="reveal faq-item glass-strong rounded-2xl" name="faq" style="--d:180ms">
+            <summary class="flex items-center justify-between gap-4 px-5 sm:px-6 py-5 min-h-[56px] font-semibold text-lg">
+              How does the auto-stop timer work?
+              <i data-lucide="chevron-down" class="faq-chev w-5 h-5 shrink-0 text-brand-600"></i>
+            </summary>
+            <div class="faq-body px-5 sm:px-6 pb-6 text-slate-600 leading-relaxed">Choose a duration, or select <strong>Indefinite</strong> to keep sleep prevention on until you turn it off yourself. When the chosen time is reached, sleep prevention stops.</div>
+          </details>
+
+          <details class="reveal faq-item glass-strong rounded-2xl" name="faq" style="--d:240ms">
+            <summary class="flex items-center justify-between gap-4 px-5 sm:px-6 py-5 min-h-[56px] font-semibold text-lg">
+              How do I turn sleep prevention off?
+              <i data-lucide="chevron-down" class="faq-chev w-5 h-5 shrink-0 text-brand-600"></i>
+            </summary>
+            <div class="faq-body px-5 sm:px-6 pb-6 text-slate-600 leading-relaxed">Use the Sleep Prevention switch in the app to turn it off, or let the auto-stop timer end it for you.</div>
+          </details>
+
+          <details class="reveal faq-item glass-strong rounded-2xl" name="faq" style="--d:300ms">
+            <summary class="flex items-center justify-between gap-4 px-5 sm:px-6 py-5 min-h-[56px] font-semibold text-lg">
+              Which versions of Windows does AwakePulse support?
+              <i data-lucide="chevron-down" class="faq-chev w-5 h-5 shrink-0 text-brand-600"></i>
+            </summary>
+            <div class="faq-body px-5 sm:px-6 pb-6 text-slate-600 leading-relaxed">Specific Windows versions are not listed yet. Please check the project's <a href="https://github.com/Adi-CodeHub/awake-pulse" target="_blank" rel="noopener noreferrer" class="text-brand-600 font-medium underline underline-offset-4 decoration-brand-300 hover:decoration-brand-600">GitHub page</a> for the latest details before downloading.</div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= DOWNLOAD ================= -->
+    <section id="download" class="relative py-20 sm:py-28 px-4 sm:px-8">
+      <div class="max-w-5xl mx-auto">
+        <div class="reveal download-panel relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] px-6 sm:px-14 py-14 sm:py-20 text-center text-white shadow-2xl shadow-brand-900/30">
+          <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-400/20 blur-3xl" aria-hidden="true"></div>
+          <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-emerald-400/20 blur-3xl" aria-hidden="true"></div>
+
+          <div class="relative">
+            <span class="mx-auto grid place-items-center w-16 h-16 rounded-2xl bg-white/10 border border-white/15 backdrop-blur">
+              <i data-lucide="zap" class="w-8 h-8 text-brand-300"></i>
+            </span>
+            <h2 class="mt-6 text-4xl sm:text-5xl font-bold tracking-tight">Ready to keep your PC awake?</h2>
+            <p class="mt-4 text-lg text-slate-300 max-w-xl mx-auto">Download AwakePulse for Windows and take control of sleep mode in seconds.</p>
+
+            <div class="mt-9 flex flex-col items-center gap-3">
+              <a href="https://github.com/Adi-CodeHub/awake-pulse/releases/download/v1.0.0/AwakePulse.exe"
+                 class="btn-white inline-flex items-center justify-center gap-3 rounded-2xl px-8 h-14 text-lg w-full sm:w-auto">
+                <i data-lucide="download" class="w-5 h-5"></i> Download for Windows
+              </a>
+              <p class="text-sm text-slate-400 flex items-center gap-2">
+                <i data-lucide="monitor" class="w-4 h-4"></i> AwakePulse.exe · v1.0.0 · Windows
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="px-4 sm:px-8 lg:px-16 pb-4 sm:pb-6 mt-4">
+    <div class="glass rounded-3xl max-w-6xl mx-auto px-6 sm:px-8 py-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-5">
+        <a href="#top" class="flex items-center gap-2.5" aria-label="Back to top">
+          <span class="grid place-items-center w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-brand-400 text-white"><i data-lucide="zap" class="w-4 h-4"></i></span>
+          <span class="font-bold text-lg">AwakePulse</span>
+        </a>
+
+        <nav class="flex flex-wrap justify-center gap-x-7 gap-y-2 text-sm" aria-label="Footer navigation">
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#how" class="nav-link">How it works</a>
+          <a href="#benefits" class="nav-link">Benefits</a>
+          <a href="#faq" class="nav-link">FAQ</a>
+          <a href="https://github.com/Adi-CodeHub/awake-pulse" target="_blank" rel="noopener noreferrer" class="nav-link">GitHub</a>
+        </nav>
+
+        <p class="text-sm text-slate-500">© <span id="year">2026</span> AwakePulse. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button type="button" id="toTop" class="to-top glass" aria-label="Back to top" tabindex="-1">
+    <svg class="ring" viewBox="0 0 52 52" aria-hidden="true">
+      <circle class="ring-bg" cx="26" cy="26" r="24" fill="none" stroke-width="2.5"></circle>
+      <circle class="ring-fg" id="toTopRing" cx="26" cy="26" r="24" fill="none" stroke-width="2.5" stroke-dasharray="150.8" stroke-dashoffset="150.8"></circle>
+    </svg>
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
+
+  <script>
+    // Safe icon renderer: the page keeps working even if the icon library fails to load
+    function renderIcons() { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }
+    renderIcons();
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ---------- Mobile menu ---------- */
+    const menuBtn = document.getElementById('menuBtn');
+    const menu = document.getElementById('mobileMenu');
+    const menuIcon = document.getElementById('menuIcon');
+    function setMenu(open) {
+      menu.style.maxHeight = open ? menu.scrollHeight + 'px' : '0';
+      menu.style.opacity = open ? '1' : '0';
+      menu.setAttribute('aria-hidden', String(!open));
+      menuBtn.setAttribute('aria-expanded', String(open));
+      menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      menuBtn.innerHTML = '<i data-lucide="' + (open ? 'x' : 'menu') + '" class="w-6 h-6"></i>';
+      renderIcons();
+    }
+    menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+    document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => setMenu(false)));
+
+    /* ---------- Reveal on scroll ---------- */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* ---------- Interactive app mockup ---------- */
+    const sw = document.getElementById('sleepSwitch');
+    const pill = document.getElementById('statusPill');
+    const statusText = document.getElementById('statusText');
+    const timerEl = document.getElementById('timer');
+    const tH = document.getElementById('tH'), tM = document.getElementById('tM'), tS = document.getElementById('tS');
+    const autoStop = document.getElementById('autoStop');
+    const displayChk = document.getElementById('displayChk');
+
+    let seconds = 9 * 60 + 36;   // starts at 00:09:36 like the reference screenshot
+    let active = true;
+    let tick = null;
+
+    const pad = n => String(n).padStart(2, '0');
+    function render() {
+      tH.textContent = pad(Math.floor(seconds / 3600));
+      tM.textContent = pad(Math.floor((seconds % 3600) / 60));
+      tS.textContent = pad(seconds % 60);
+    }
+    function labelText() {
+      if (!active) return 'SLEEP ALLOWED (INACTIVE)';
+      return displayChk.checked ? 'PREVENTING SLEEP (ACTIVE)' : 'PREVENTING SLEEP · DISPLAY MAY DIM';
+    }
+    function paint() {
+      sw.setAttribute('aria-checked', String(active));
+      pill.classList.toggle('off', !active);
+      timerEl.classList.toggle('off', !active);
+      statusText.textContent = labelText();
+    }
+    function start() {
+      if (tick) return;
+      tick = setInterval(() => {
+        seconds++;
+        const limit = parseInt(autoStop.value, 10);
+        if (limit > 0 && seconds >= limit) { seconds = limit; setActive(false); }
+        render();
+      }, 1000);
+    }
+    function stop() { clearInterval(tick); tick = null; }
+    function setActive(v) {
+      active = v;
+      if (active) {
+        const limit = parseInt(autoStop.value, 10);
+        if (limit > 0 && seconds >= limit) seconds = 0;
+        start();
+      } else { stop(); }
+      paint(); render();
+    }
+
+    sw.addEventListener('click', () => setActive(!active));
+    sw.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setActive(!active); } });
+    displayChk.addEventListener('change', paint);
+    autoStop.addEventListener('change', () => {
+      const limit = parseInt(autoStop.value, 10);
+      if (limit > 0 && seconds >= limit) seconds = 0;   // restart the countdown window
+      render();
+    });
+
+    render(); paint(); start();
+
+    /* ---------- Dark / light theme ---------- */
+    const root = document.documentElement;
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    const themeBtns = document.querySelectorAll('[data-theme-toggle]');
+    function applyTheme(t, save) {
+      root.setAttribute('data-theme', t);
+      if (themeMeta) themeMeta.setAttribute('content', t === 'dark' ? '#070b14' : '#f5f8ff');
+      themeBtns.forEach(b => b.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'));
+      if (save) { try { localStorage.setItem('ap-theme', t); } catch (e) {} }
+    }
+    applyTheme(root.getAttribute('data-theme') || 'light', false);
+    themeBtns.forEach(b => b.addEventListener('click', () => {
+      applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark', true);
+    }));
+    // Follow the system setting until the visitor picks a theme manually
+    if (window.matchMedia) {
+      const mq = matchMedia('(prefers-color-scheme: dark)');
+      const onSystemChange = e => {
+        let saved = null;
+        try { saved = localStorage.getItem('ap-theme'); } catch (err) {}
+        if (!saved) applyTheme(e.matches ? 'dark' : 'light', false);
+      };
+      if (mq.addEventListener) mq.addEventListener('change', onSystemChange);
+    }
+
+    /* ---------- Back to top (with scroll progress ring) ---------- */
+    const toTop = document.getElementById('toTop');
+    const ring = document.getElementById('toTopRing');
+    const CIRC = 150.8;
+    let ticking = false;
+    function onScroll() {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? Math.min(y / max, 1) : 0;
+      ring.style.strokeDashoffset = String(CIRC * (1 - pct));
+      const show = y > 500;
+      toTop.classList.toggle('show', show);
+      toTop.tabIndex = show ? 0 : -1;
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+    }, { passive: true });
+    toTop.addEventListener('click', () => {
+      const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    onScroll();
+  </script>
+</body>
+</html>
