@@ -18,6 +18,7 @@ A lightweight, modern Windows desktop application that prevents your PC and scre
 
 ## 📥 Download & Installation
 
+0. Go to the [**Website**](https://adi-codehub.github.io/awake-pulse/).
 1. Go to the [**Releases**](https://github.com/Adi-CodeHub/awake-pulse/releases) section.
 2. Download `AwakePulse-v1.0.0.zip`.
 3. Extract the ZIP and double-click **`AwakePulse.exe`**.
